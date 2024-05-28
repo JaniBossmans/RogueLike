@@ -1,0 +1,4 @@
+.Text {
+    color: rgb(255, 255, 255);
+    -unity-font: url('project://database/Assets/UnityDefaultRuntimeTheme.tss?fileID=2230732570650464555&guid=b39e2680f0b1cf1479471e60a3162f3c&type=3#NotInter-Regular');
+}
