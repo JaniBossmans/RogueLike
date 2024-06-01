@@ -36,7 +36,6 @@ public class MapManager : MonoBehaviour
     public Dictionary<Vector2Int, Node> Nodes = new Dictionary<Vector2Int, Node>();
     public List<Vector3Int> VisibleTiles;
     public Dictionary<Vector3Int, TileData> Tiles;
-    
 
     [Header("Map Settings")]
     public int width = 80;
@@ -55,7 +54,9 @@ public class MapManager : MonoBehaviour
         Tiles = new Dictionary<Vector3Int, TileData>();
         VisibleTiles = new List<Vector3Int>();
 
-        var generator = new DungeonGenerator();
+        GameObject dungeonGeneratorObject = new GameObject("DungeonGenerator");
+        DungeonGenerator generator = dungeonGeneratorObject.AddComponent<DungeonGenerator>();
+
         generator.SetSize(width, height);
         generator.SetRoomSize(roomMinSize, roomMaxSize);
         generator.SetMaxRooms(maxRooms);
@@ -64,14 +65,11 @@ public class MapManager : MonoBehaviour
         AddTileMapToDictionary(FloorMap);
         AddTileMapToDictionary(ObstacleMap);
         SetupFogMap();
+
+        Destroy(dungeonGeneratorObject); // verwijder het tijdelijke GameObject
     }
 
-    public GameObject CreateActor(string name, Vector2 position)
-    {
-        GameObject actor = Instantiate(Resources.Load<GameObject>($"Prefabs/{name}"), new Vector3(position.x + 0.5f, position.y + 0.5f, 0), Quaternion.identity);
-        actor.name = name;
-        return actor;
-    }
+    
 
     public bool InBounds(int x, int y) => 0 <= x && x < width && 0 <= y && y < height;
 
