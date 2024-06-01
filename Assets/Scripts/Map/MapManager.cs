@@ -43,6 +43,8 @@ public class MapManager : MonoBehaviour
     public int roomMaxSize = 10;
     public int roomMinSize = 6;
     public int maxRooms = 30;
+    public int maxItems = 2; // Standaardwaarde voor maxItems
+    public int maxEnemies = 10; // Standaardwaarde voor maxEnemies
 
     private void Start()
     {
@@ -60,16 +62,16 @@ public class MapManager : MonoBehaviour
         generator.SetSize(width, height);
         generator.SetRoomSize(roomMinSize, roomMaxSize);
         generator.SetMaxRooms(maxRooms);
+        generator.SetMaxEnemies(maxEnemies); // Voeg deze regel toe
+        generator.SetMaxItems(maxItems); // Voeg deze regel toe
         generator.Generate();
 
         AddTileMapToDictionary(FloorMap);
         AddTileMapToDictionary(ObstacleMap);
         SetupFogMap();
 
-        Destroy(dungeonGeneratorObject); // verwijder het tijdelijke GameObject
+        Destroy(dungeonGeneratorObject); // Verwijder het tijdelijke GameObject
     }
-
-    
 
     public bool InBounds(int x, int y) => 0 <= x && x < width && 0 <= y && y < height;
 
