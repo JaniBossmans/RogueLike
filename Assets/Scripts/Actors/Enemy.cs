@@ -6,6 +6,7 @@ public class Enemy : MonoBehaviour
     public Actor Target;
     public bool IsFighting = false;
     private AStar algorithm;
+    private int confused = 0;
 
     private void Start()
     {
@@ -31,6 +32,14 @@ public class Enemy : MonoBehaviour
         // convert the position of the target to a gridPosition
         var gridPosition = MapManager.Get.FloorMap.WorldToCell(Target.transform.position);
 
+        // Check if confused
+        if (confused > 0)
+        {
+            UIManager.Get.AddMessage($"{name} is confused and cannot act", Color.yellow);
+            confused--;
+            return;
+        }
+
         // First check if already fighting, because the FieldOfView check costs more cpu
         if (IsFighting || GetComponent<Actor>().FieldOfView.Contains(gridPosition))
         {
@@ -55,5 +64,10 @@ public class Enemy : MonoBehaviour
                 MoveAlongPath(gridPosition);
             }
         }
+    }
+
+    public void Confuse()
+    {
+        confused = 8;
     }
 }

@@ -1,32 +1,35 @@
 using System.Collections.Generic;
-using System.Collections;
 using UnityEngine;
 
-public class Inventory : MonoBehaviour
+public class Inventory
 {
-    // Public list to hold Consumable items
-    public List<Consumable> Items = new List<Consumable>();
+    private int capacity;
+    private List<GameObject> items;
 
-    // Public variable to store the maximum number of items
-    public int MaxItems;
-
-    // Function to add an item to the inventory
-    public bool AddItem(Consumable item)
+    public Inventory(int capacity)
     {
-        if (Items.Count < MaxItems)
-        {
-            Items.Add(item);
-            return true;
-        }
-        else
+        this.capacity = capacity;
+        items = new List<GameObject>();
+    }
+
+    public bool IsFull()
+    {
+        return items.Count >= capacity;
+    }
+
+    public bool AddItem(GameObject item)
+    {
+        if (IsFull())
         {
             return false;
         }
+
+        items.Add(item);
+        return true;
     }
 
-    // Function to remove an item from the inventory
-    public void DropItem(Consumable item)
+    public void RemoveItem(GameObject item)
     {
-        Items.Remove(item);
+        items.Remove(item);
     }
 }

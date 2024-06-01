@@ -1,0 +1,5 @@
+.inv-label {
+    -unity-text-align: upper-center;
+    -unity-font-style: bold-and-italic;
+    color: rgb(255, 255, 255);
+}
