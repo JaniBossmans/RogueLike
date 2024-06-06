@@ -9,9 +9,9 @@ public class UIManager : MonoBehaviour
     [Header("Documents")]
     public GameObject HealthBar;
     public GameObject Messages;
-    public GameObject inventory; // Voeg het GameObject voor het inventory toe
+    public GameObject inventory; // Reference to the inventory GameObject
 
-    private InventoryUI inventoryUI; // Variabele voor het InventoryUI component
+    private InventoryUI inventoryUI; // Variable for the InventoryUI component
 
     private void Awake()
     {
@@ -24,16 +24,16 @@ public class UIManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        // Zoek en sla het InventoryUI component op
+        // Find and store the InventoryUI component
         inventoryUI = inventory.GetComponent<InventoryUI>();
 
-        // Start de inventaris door het InventoryUI-component te initialiseren
-        inventoryUI.Initialize();
+        // Remove this line since the Initialize method doesn't exist
+        // inventoryUI.Initialize();
     }
 
     public static UIManager Get { get => instance; }
 
-    // Public getter voor toegang tot het InventoryUI component
+    // Public getter for accessing the InventoryUI component
     public InventoryUI InventoryUI { get => inventoryUI; }
 
     public void UpdateHealth(int current, int max)

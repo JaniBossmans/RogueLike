@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Actor))]
 public class Player : MonoBehaviour, Controls.IPlayerActions
@@ -73,6 +74,31 @@ public class Player : MonoBehaviour, Controls.IPlayerActions
         }
     }
 
+    public void OnGrab(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            var item = GameManager.Get.GetItemAtLocation(transform.position)?.GetComponent<Consumable>();
+            if (item != null)
+            {
+                if (inventory.AddItem(item))
+                {
+                    item.gameObject.SetActive(false);
+                    GameManager.Get.RemoveItem(item);
+                    UIManager.Get.AddMessage($"You've picked up a {item.name}.", Color.yellow);
+                }
+                else
+                {
+                    UIManager.Get.AddMessage("Your inventory is full.", Color.red);
+                }
+            }
+            else
+            {
+                UIManager.Get.AddMessage("You could not find anything.", Color.yellow);
+            }
+        }
+    }
+
     public void OnDrop(InputAction.CallbackContext context)
     {
         if (context.performed && !inventoryIsOpen)
@@ -103,8 +129,8 @@ public class Player : MonoBehaviour, Controls.IPlayerActions
                 var selectedItem = selectedItems[UIManager.Get.InventoryUI.Selected];
                 if (droppingItem)
                 {
-                    inventory.DropItem(selectedItem);
-                    // Voeg hier logica toe om het item op de grond te plaatsen
+                    inventory.RemoveItem(selectedItem);
+                    // Add logic to place the item on the ground
                 }
                 else if (usingItem)
                 {
@@ -120,6 +146,7 @@ public class Player : MonoBehaviour, Controls.IPlayerActions
         }
     }
 
+
     private void Move()
     {
         Vector2 direction = controls.Player.Movement.ReadValue<Vector2>();
@@ -130,35 +157,36 @@ public class Player : MonoBehaviour, Controls.IPlayerActions
 
     private void UseItem(Consumable item)
     {
-        if (item is HealthPotion)
+        switch (item.Type)
         {
-            HealthPotion healthPotion = (HealthPotion)item;
-            GameManager.Get.Player.Heal(healthPotion.HealingAmount);
-            UIManager.Get.AddMessage($"You used a Health Potion and gained {healthPotion.HealingAmount} HP!", Color.green);
-        }
-        else if (item is Fireball)
-        {
-            Fireball fireball = (Fireball)item;
-            List<Actor> nearbyEnemies = GameManager.Get.GetNearbyEnemies(transform.position);
+            case Consumable.ItemType.HealthPotion:
+                int healingAmount = 50; // Set your actual healing amount
+                GameManager.Get.Player.Heal(healingAmount);
+                UIManager.Get.AddMessage($"You used a Health Potion and gained {healingAmount} HP!", Color.green);
+                break;
 
-            foreach (Actor enemy in nearbyEnemies)
-            {
-                enemy.DoDamage(fireball.Damage);
-            }
+            case Consumable.ItemType.Fireball:
+                int fireballDamage = 30; // Set your actual fireball damage
+                List<Actor> nearbyEnemies = GameManager.Get.GetNearbyEnemies(transform.position);
+                foreach (Actor enemy in nearbyEnemies)
+                {
+                    enemy.DoDamage(fireballDamage);
+                }
+                UIManager.Get.AddMessage($"You used a Fireball and dealt {fireballDamage} damage to nearby enemies!", Color.red);
+                break;
 
-            UIManager.Get.AddMessage($"You used a Fireball and dealt {fireball.Damage} damage to nearby enemies!", Color.red);
-        }
-        else if (item is ScrollOfConfusion)
-        {
-            ScrollOfConfusion scroll = (ScrollOfConfusion)item;
-            List<Actor> nearbyEnemies = GameManager.Get.GetNearbyEnemies(transform.position);
+            case Consumable.ItemType.ScrollOfConfusion:
+                List<Actor> enemiesToConfuse = GameManager.Get.GetNearbyEnemies(transform.position);
+                foreach (Actor enemy in enemiesToConfuse)
+                {
+                    enemy.GetComponent<Enemy>().Confuse();
+                }
+                UIManager.Get.AddMessage($"You used a Scroll of Confusion and confused nearby enemies!", Color.yellow);
+                break;
 
-            foreach (Actor enemy in nearbyEnemies)
-            {
-                enemy.GetComponent<Enemy>().Confuse();
-            }
-
-            UIManager.Get.AddMessage($"You used a Scroll of Confusion and confused nearby enemies!", Color.yellow);
+            default:
+                Debug.LogWarning("Unknown item type used.");
+                break;
         }
     }
 

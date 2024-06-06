@@ -22,8 +22,8 @@ public class GameManager : MonoBehaviour
 
     public Actor Player;
     public List<Actor> Enemies = new List<Actor>();
-    private Dictionary<Vector3, GameObject> itemsOnMap = new Dictionary<Vector3, GameObject>();
-
+    // Change Items to a dictionary
+    public Dictionary<Vector3, Consumable> Items = new Dictionary<Vector3, Consumable>();
 
     public GameObject CreateGameObject(string name, Vector2 position)
     {
@@ -72,34 +72,29 @@ public class GameManager : MonoBehaviour
         return null;
     }
 
-    private List<Consumable> items = new List<Consumable>();
-
-    // Function to add an item to the list
+    // Function to add an item to the dictionary
     public void AddItem(Consumable item)
     {
         if (item != null)
         {
-            items.Add(item);
+            Items[item.transform.position] = item;
         }
     }
 
-    // Function to remove an item from the list
+    // Function to remove an item from the dictionary
     public void RemoveItem(Consumable item)
     {
         if (item != null)
         {
-            items.Remove(item);
+            Items.Remove(item.transform.position);
         }
     }
 
-    // Function to get an item at a specific location in the list
-    public Consumable GetItemAtLocation(int index)
+    // Function to get an item at a specific location in the dictionary
+    public Consumable GetItemAtLocation(Vector3 location)
     {
-        if (index >= 0 && index < items.Count)
-        {
-            return items[index];
-        }
-        return null;
+        Items.TryGetValue(location, out Consumable item);
+        return item;
     }
 
     public GameObject CreateActor(string name, Vector2 position)
@@ -109,25 +104,25 @@ public class GameManager : MonoBehaviour
         return actor;
     }
 
-    public GameObject GetItemAtPosition(Vector3 position)
+    public Consumable GetItemAtPosition(Vector3 position)
     {
-        itemsOnMap.TryGetValue(position, out GameObject item);
+        Items.TryGetValue(position, out Consumable item);
         return item;
     }
 
     public void RemoveItemAtPosition(Vector3 position)
     {
-        if (itemsOnMap.ContainsKey(position))
+        if (Items.ContainsKey(position))
         {
-            itemsOnMap.Remove(position);
+            Items.Remove(position);
         }
     }
 
-    public void AddItemAtPosition(Vector3 position, GameObject item)
+    public void AddItemAtPosition(Vector3 position, Consumable item)
     {
-        if (!itemsOnMap.ContainsKey(position))
+        if (!Items.ContainsKey(position))
         {
-            itemsOnMap[position] = item;
+            Items[position] = item;
         }
     }
 
@@ -135,13 +130,10 @@ public class GameManager : MonoBehaviour
     {
         List<Actor> nearbyEnemies = new List<Actor>();
 
-        // Itereer door alle vijanden
         foreach (Actor enemy in Enemies)
         {
-            // Bereken de afstand tussen de gegeven locatie en de locatie van de vijand
             float distance = Vector3.Distance(location, enemy.transform.position);
 
-            // Als de afstand minder is dan 5, voeg de vijand toe aan de lijst van nabije vijanden
             if (distance < 5f)
             {
                 nearbyEnemies.Add(enemy);

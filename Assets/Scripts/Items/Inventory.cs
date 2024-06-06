@@ -4,12 +4,12 @@ using UnityEngine;
 public class Inventory
 {
     private int capacity;
-    private List<GameObject> items;
+    public List<Consumable> items;
 
     public Inventory(int capacity)
     {
         this.capacity = capacity;
-        items = new List<GameObject>();
+        items = new List<Consumable>();
     }
 
     public bool IsFull()
@@ -17,7 +17,7 @@ public class Inventory
         return items.Count >= capacity;
     }
 
-    public bool AddItem(GameObject item)
+    public bool AddItem(Consumable item)
     {
         if (IsFull())
         {
@@ -28,8 +28,13 @@ public class Inventory
         return true;
     }
 
-    public void RemoveItem(GameObject item)
+    public void RemoveItem(Consumable item)
     {
         items.Remove(item);
+    }
+
+    public List<Consumable> GetItems()
+    {
+        return items;
     }
 }

@@ -174,11 +174,11 @@ public class DungeonGenerator : MonoBehaviour
             // creëer verschillende vijanden
             if (Random.value < 0.5f)
             {
-                GameManager.Get.CreateGameObject("Pig", new Vector2(x, y));
+                GameManager.Get.CreateGameObject("Wolf", new Vector2(x, y));
             }
             else
             {
-                GameManager.Get.CreateGameObject("Snake", new Vector2(x, y));
+                GameManager.Get.CreateGameObject("Wasp", new Vector2(x, y));
             }
         }
     }
@@ -201,7 +201,7 @@ public class DungeonGenerator : MonoBehaviour
             }
             else
             {
-                GameManager.Get.CreateGameObject("ManaPotion", new Vector2(x, y));
+                GameManager.Get.CreateGameObject("Fireball", new Vector2(x, y));
             }
         }
     }

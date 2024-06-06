@@ -9,11 +9,11 @@ public class InventoryUI : MonoBehaviour
     private int selected;
     private int numItems;
 
-    private void Start()
+    private void Awake()
     {
         root = GetComponent<UIDocument>().rootVisualElement;
 
-        // Labels toevoegen aan de array
+        // Add labels to the array
         for (int i = 0; i < 8; i++)
         {
             labels[i] = root.Q<Label>("Item" + (i + 1));
@@ -23,7 +23,7 @@ public class InventoryUI : MonoBehaviour
         Hide();
     }
 
-    public int Selected { get => selected; } // Public getter voor selected
+    public int Selected { get => selected; }
 
     public void Clear()
     {
@@ -39,11 +39,11 @@ public class InventoryUI : MonoBehaviour
         {
             if (i == selected)
             {
-                labels[i].style.backgroundColor = Color.green;
+                labels[i].style.backgroundColor = new StyleColor(Color.green);
             }
             else
             {
-                labels[i].style.backgroundColor = Color.clear;
+                labels[i].style.backgroundColor = new StyleColor(Color.clear);
             }
         }
     }
@@ -66,7 +66,7 @@ public class InventoryUI : MonoBehaviour
         numItems = list.Count;
         Clear();
 
-        // Stel de tekst van de labels in op basis van de lijst
+        // Set the text of the labels based on the list
         for (int i = 0; i < numItems && i < labels.Length; i++)
         {
             labels[i].text = list[i].name;

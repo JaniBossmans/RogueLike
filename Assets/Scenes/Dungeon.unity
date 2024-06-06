@@ -460,6 +460,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HealthBar: {fileID: 773676333}
   Messages: {fileID: 1217497019}
+  inventory: {fileID: 1431318637}
 --- !u!1 &1410258481
 GameObject:
   m_ObjectHideFlags: 0
@@ -590,6 +591,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1431318638}
   - component: {fileID: 1431318639}
+  - component: {fileID: 1431318640}
   m_Layer: 0
   m_Name: InventoryUI
   m_TagString: Untagged
@@ -628,6 +630,18 @@ MonoBehaviour:
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 627d691a886bd5d42bb45b3057087cc3, type: 3}
   m_SortingOrder: 0
+--- !u!114 &1431318640
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1431318637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77e3a177ed814b8488c90a2e92fa7718, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1578167247
 GameObject:
   m_ObjectHideFlags: 0
