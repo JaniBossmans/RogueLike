@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using static UnityEngine.EventSystems.EventTrigger;
 
 public class MapManager : MonoBehaviour
 {
@@ -45,6 +44,7 @@ public class MapManager : MonoBehaviour
     public int maxRooms = 30;
     public int maxItems = 2; // Standaardwaarde voor maxItems
     public int maxEnemies = 10; // Standaardwaarde voor maxEnemies
+    public int floor = 0;
 
     private void Start()
     {
@@ -53,6 +53,7 @@ public class MapManager : MonoBehaviour
 
     private void GenerateDungeon()
     {
+        ClearObjects(); // New method to clear objects
         Tiles = new Dictionary<Vector3Int, TileData>();
         VisibleTiles = new List<Vector3Int>();
 
@@ -62,88 +63,49 @@ public class MapManager : MonoBehaviour
         generator.SetSize(width, height);
         generator.SetRoomSize(roomMinSize, roomMaxSize);
         generator.SetMaxRooms(maxRooms);
-        generator.SetMaxEnemies(maxEnemies); // Voeg deze regel toe
-        generator.SetMaxItems(maxItems); // Voeg deze regel toe
+        generator.SetMaxItems(maxItems); // Gebruik maxItems van MapManager
+        generator.SetMaxEnemies(maxEnemies); // Gebruik maxEnemies van MapManager
+        generator.SetCurrentFloor(floor); // Set current floor
         generator.Generate();
 
-        AddTileMapToDictionary(FloorMap);
-        AddTileMapToDictionary(ObstacleMap);
-        SetupFogMap();
-
-        Destroy(dungeonGeneratorObject); // Verwijder het tijdelijke GameObject
+        // Update floor info
+        UIManager.Get.UpdateFloor(floor);
     }
 
-    public bool InBounds(int x, int y) => 0 <= x && x < width && 0 <= y && y < height;
+    private void ClearObjects()
+    {
+        GameManager.Get.ClearAllObjects(); // Clear enemies and items
+        FogMap.ClearAllTiles(); // Clear fog tiles
+    }
+
+    public void MoveUp()
+    {
+        floor--;
+        if (floor < 0)
+        {
+            floor = 0; // Prevent going below the first floor
+        }
+        GenerateDungeon();
+    }
+
+    public void MoveDown()
+    {
+        floor++;
+        GenerateDungeon();
+    }
 
     public bool IsWalkable(Vector3 position)
     {
-        Vector3Int gridPosition = FloorMap.WorldToCell(position);
-        if (!InBounds(gridPosition.x, gridPosition.y) || ObstacleMap.HasTile(gridPosition))
-        {
-            return false;
-        }
-        return true;
+        Vector3Int cellPosition = FloorMap.WorldToCell(position);
+        return FloorMap.HasTile(cellPosition) && !ObstacleMap.HasTile(cellPosition);
     }
 
-    private void AddTileMapToDictionary(Tilemap tilemap)
+    public void UpdateFogMap(List<Vector3Int> fieldOfView)
     {
-        foreach (var pos in tilemap.cellBounds.allPositionsWithin)
+        FogMap.ClearAllTiles();
+        foreach (var tilePos in fieldOfView)
         {
-            if (!tilemap.HasTile(pos))
-            {
-                continue;
-            }
-            TileData tile = new TileData(
-                name: tilemap.GetTile(pos).name,
-                isExplored: false,
-                isVisible: false
-            );
-
-            Tiles.Add(pos, tile);
-        }
-    }
-
-    private void SetupFogMap()
-    {
-        foreach (Vector3Int pos in Tiles.Keys)
-        {
-            if (!FogMap.HasTile(pos))
-            {
-                FogMap.SetTile(pos, FogTile);
-                FogMap.SetTileFlags(pos, TileFlags.None);
-            }
-
-            if (Tiles[pos].IsExplored)
-            {
-                FogMap.SetColor(pos, new Color(1.0f, 1.0f, 1.0f, 0.5f));
-            }
-            else
-            {
-                FogMap.SetColor(pos, Color.white);
-            }
-        }
-    }
-
-    public void UpdateFogMap(List<Vector3Int> playerFOV)
-    {
-        foreach (var pos in VisibleTiles)
-        {
-            if (!Tiles[pos].IsExplored)
-            {
-                Tiles[pos].IsExplored = true;
-            }
-
-            Tiles[pos].IsVisible = false;
-            FogMap.SetColor(pos, new Color(1.0f, 1.0f, 1.0f, 0.5f));
-        }
-
-        VisibleTiles.Clear();
-
-        foreach (var pos in playerFOV)
-        {
-            Tiles[pos].IsVisible = true;
-            FogMap.SetColor(pos, Color.clear);
-            VisibleTiles.Add(pos);
+            FogMap.SetTile(tilePos, null); // Clear fog of war from the visible tiles
         }
     }
 }

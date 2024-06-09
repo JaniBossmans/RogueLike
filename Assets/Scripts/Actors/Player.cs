@@ -28,12 +28,18 @@ public class Player : MonoBehaviour, Controls.IPlayerActions
     {
         controls.Player.SetCallbacks(this);
         controls.Enable();
+
+        // Register the ladder interaction
+        controls.Player.Ladder.performed += OnLadder;
     }
 
     private void OnDisable()
     {
         controls.Player.SetCallbacks(null);
         controls.Disable();
+
+        // Unregister the ladder interaction
+        controls.Player.Ladder.performed -= OnLadder;
     }
 
     public void OnMovement(InputAction.CallbackContext context)
@@ -146,6 +152,26 @@ public class Player : MonoBehaviour, Controls.IPlayerActions
         }
     }
 
+    public void OnLadder(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            Vector3 playerPosition = transform.position;
+            Ladder ladder = GameManager.Get.GetLadderAtLocation(playerPosition);
+
+            if (ladder != null)
+            {
+                if (ladder.Up)
+                {
+                    MapManager.Get.MoveUp();
+                }
+                else
+                {
+                    MapManager.Get.MoveDown();
+                }
+            }
+        }
+    }
 
     private void Move()
     {
@@ -170,7 +196,7 @@ public class Player : MonoBehaviour, Controls.IPlayerActions
                 List<Actor> nearbyEnemies = GameManager.Get.GetNearbyEnemies(transform.position);
                 foreach (Actor enemy in nearbyEnemies)
                 {
-                    enemy.DoDamage(fireballDamage);
+                    enemy.DoDamage(fireballDamage, GameManager.Get.Player);  // Pass the attacker as the second argument
                 }
                 UIManager.Get.AddMessage($"You used a Fireball and dealt {fireballDamage} damage to nearby enemies!", Color.red);
                 break;
@@ -189,5 +215,4 @@ public class Player : MonoBehaviour, Controls.IPlayerActions
                 break;
         }
     }
-
 }

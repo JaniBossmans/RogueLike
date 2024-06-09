@@ -37,7 +37,7 @@ public class Action : MonoBehaviour
         if (damage > 0)
         {
             UIManager.Get.AddMessage($"{description} for {damage} hit points.", color);
-            target.DoDamage(damage);
+            target.DoDamage(damage, actor);  // Pass the attacker as the second argument
         }
         else
         {
@@ -52,5 +52,4 @@ public class Action : MonoBehaviour
             GameManager.Get.StartEnemyTurn();
         }
     }
-
 }

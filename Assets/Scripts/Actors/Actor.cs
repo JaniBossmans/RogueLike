@@ -16,12 +16,17 @@ public class Actor : MonoBehaviour
     [SerializeField] private int hitPoints;
     [SerializeField] private int defense;
     [SerializeField] private int power;
+    [SerializeField] private int level = 1;            // Add level variable
+    [SerializeField] private int xp = 0;               // Add xp variable
+    [SerializeField] private int xpToNextLevel = 100;  // Add xpToNextLevel variable
 
     public int MaxHitPoints { get => maxHitPoints; }
     public int HitPoints { get => hitPoints; }
     public int Defense { get => defense; }
     public int Power { get => power; }
-
+    public int Level { get => level; }                // Getter for level
+    public int XP { get => xp; }                      // Getter for xp
+    public int XPToNextLevel { get => xpToNextLevel; } // Getter for xpToNextLevel
 
     private void Start()
     {
@@ -31,6 +36,8 @@ public class Actor : MonoBehaviour
         if (GetComponent<Player>())
         {
             UIManager.Get.UpdateHealth(HitPoints, MaxHitPoints);
+            UIManager.Get.UpdateLevel(Level);        // Update UI with level
+            UIManager.Get.UpdateXP(XP);              // Update UI with xp
         }
     }
 
@@ -55,7 +62,7 @@ public class Actor : MonoBehaviour
         }
     }
 
-    public void DoDamage(int hp)
+    public void DoDamage(int hp, Actor attacker)       // Modified function signature
     {
         hitPoints -= hp;
 
@@ -66,7 +73,14 @@ public class Actor : MonoBehaviour
             UIManager.Get.UpdateHealth(hitPoints, MaxHitPoints);
         }
 
-        if (hitPoints == 0) Die();
+        if (hitPoints == 0)
+        {
+            if (attacker.GetComponent<Player>())       // Check if attacker is player
+            {
+                attacker.AddXp(xp);                   // Add XP to the player
+            }
+            Die();
+        }
     }
 
     public void Heal(int hp)
@@ -81,6 +95,26 @@ public class Actor : MonoBehaviour
         }
     }
 
+    public void AddXp(int xpToAdd)
+    {
+        xp += xpToAdd;
+        UIManager.Get.UpdateXP(XP);                 // Update UI with new xp
+
+        while (xp >= xpToNextLevel)
+        {
+            xp -= xpToNextLevel;
+            level++;
+            xpToNextLevel = Mathf.FloorToInt(xpToNextLevel * 1.5f); // Increase xpToNextLevel exponentially
+            maxHitPoints += 10;                     // Increase maxHitPoints
+            defense += 2;                           // Increase defense
+            power += 2;                             // Increase power
+
+            UIManager.Get.UpdateLevel(Level);       // Update UI with new level
+            UIManager.Get.UpdateHealth(hitPoints, MaxHitPoints);
+            UIManager.Get.AddMessage("You leveled up!", Color.yellow);
+        }
+    }
+
     private void Die()
     {
         if (GetComponent<Player>())
@@ -91,7 +125,10 @@ public class Actor : MonoBehaviour
         {
             UIManager.Get.AddMessage($"{name} is dead!", Color.green); //Light Orange
         }
-        GameManager.Get.CreateGameObject("Dead", transform.position).name = $"Remains of {name}";
+        Vector3 position = transform.position;
+        position.x = Mathf.Round(position.x);
+        position.y = Mathf.Round(position.y);
+        GameManager.Get.CreateGameObject("Dead", position).name = $"Remains of {name}";
         GameManager.Get.RemoveEnemy(this);
         Destroy(gameObject);
     }

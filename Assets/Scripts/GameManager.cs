@@ -22,8 +22,8 @@ public class GameManager : MonoBehaviour
 
     public Actor Player;
     public List<Actor> Enemies = new List<Actor>();
-    // Change Items to a dictionary
     public Dictionary<Vector3, Consumable> Items = new Dictionary<Vector3, Consumable>();
+    public List<Ladder> Ladders = new List<Ladder>();
 
     public GameObject CreateGameObject(string name, Vector2 position)
     {
@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
     public void AddEnemy(Actor enemy)
     {
         Enemies.Add(enemy);
+        UIManager.Get.UpdateEnemies(Enemies.Count); // Update enemies count
     }
 
     public void RemoveEnemy(Actor enemy)
@@ -42,6 +43,7 @@ public class GameManager : MonoBehaviour
         if (Enemies.Contains(enemy))
         {
             Enemies.Remove(enemy);
+            UIManager.Get.UpdateEnemies(Enemies.Count); // Update enemies count
         }
     }
 
@@ -72,7 +74,6 @@ public class GameManager : MonoBehaviour
         return null;
     }
 
-    // Function to add an item to the dictionary
     public void AddItem(Consumable item)
     {
         if (item != null)
@@ -81,7 +82,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Function to remove an item from the dictionary
     public void RemoveItem(Consumable item)
     {
         if (item != null)
@@ -90,7 +90,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Function to get an item at a specific location in the dictionary
     public Consumable GetItemAtLocation(Vector3 location)
     {
         Items.TryGetValue(location, out Consumable item);
@@ -141,5 +140,50 @@ public class GameManager : MonoBehaviour
         }
 
         return nearbyEnemies;
+    }
+
+    public void AddLadder(Ladder ladder)
+    {
+        if (!Ladders.Contains(ladder))
+        {
+            Ladders.Add(ladder);
+        }
+    }
+
+    public Ladder GetLadderAtLocation(Vector3 location)
+    {
+        foreach (Ladder ladder in Ladders)
+        {
+            if (ladder.transform.position == location)
+            {
+                return ladder;
+            }
+        }
+        return null;
+    }
+
+    public Actor FindPlayer()
+    {
+        return Player;
+    }
+
+    public void ClearAllObjects()
+    {
+        // Clear all enemies
+        foreach (var enemy in Enemies)
+        {
+            Destroy(enemy.gameObject);
+        }
+        Enemies.Clear();
+
+        // Clear all items
+        foreach (var item in Items.Values)
+        {
+            Destroy(item.gameObject);
+        }
+        Items.Clear();
+
+        // Update UI
+        UIManager.Get.UpdateEnemies(Enemies.Count);
     }
 }

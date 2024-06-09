@@ -9,9 +9,11 @@ public class UIManager : MonoBehaviour
     [Header("Documents")]
     public GameObject HealthBar;
     public GameObject Messages;
-    public GameObject inventory; // Reference to the inventory GameObject
+    public GameObject Inventory; // Reference to the inventory GameObject
+    public GameObject FloorInfo; // Reference to the FloorInfo GameObject
 
     private InventoryUI inventoryUI; // Variable for the InventoryUI component
+    private FloorInfo floorInfo; // Variable for the FloorInfo component
 
     private void Awake()
     {
@@ -25,10 +27,10 @@ public class UIManager : MonoBehaviour
         }
 
         // Find and store the InventoryUI component
-        inventoryUI = inventory.GetComponent<InventoryUI>();
+        inventoryUI = Inventory.GetComponent<InventoryUI>();
 
-        // Remove this line since the Initialize method doesn't exist
-        // inventoryUI.Initialize();
+        // Find and store the FloorInfo component
+        floorInfo = FloorInfo.GetComponent<FloorInfo>();
     }
 
     public static UIManager Get { get => instance; }
@@ -41,8 +43,34 @@ public class UIManager : MonoBehaviour
         HealthBar.GetComponent<HealthBar>().SetValues(current, max);
     }
 
+    public void UpdateLevel(int level)
+    {
+        HealthBar.GetComponent<HealthBar>().SetLevel(level);
+    }
+
+    public void UpdateXP(int xp)
+    {
+        HealthBar.GetComponent<HealthBar>().SetXP(xp);
+    }
+
     public void AddMessage(string message, Color color)
     {
         Messages.GetComponent<Messages>().AddMessage(message, color);
+    }
+
+    public void UpdateFloor(int floor)
+    {
+        if (floorInfo != null)
+        {
+            floorInfo.UpdateFloor(floor);
+        }
+    }
+
+    public void UpdateEnemies(int enemyCount)
+    {
+        if (floorInfo != null)
+        {
+            floorInfo.UpdateEnemies(enemyCount);
+        }
     }
 }

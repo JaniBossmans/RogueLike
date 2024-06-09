@@ -1,8 +1,11 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:VisualElement style="flex-grow: 1;">
-        <ui:VisualElement style="flex-grow: 1;">
-            <ui:VisualElement name="HealthBar" style="flex-grow: 1; position: absolute; height: 19px; width: 96px; top: 29px; background-color: rgb(25, 197, 25); left: 14px; color: rgb(33, 238, 17); -unity-text-outline-color: rgba(26, 243, 11, 0.96); border-left-color: rgba(49, 251, 28, 0.93); border-right-color: rgba(49, 251, 28, 0.93); border-top-color: rgba(49, 251, 28, 0.93); border-bottom-color: rgba(49, 251, 28, 0.93);" />
+    <Style src="project://database/Assets/HealthBar.uss?fileID=7433441132597879392&amp;guid=3a5be93a484f6a2438f8093c8545f87a&amp;type=3#HealthBar" />
+    <ui:VisualElement class="label">
+        <ui:VisualElement style="flex-grow: 1; align-self: auto;">
+            <ui:VisualElement name="HealthBar" style="flex-grow: 1; position: absolute; height: 55px; width: 96px; top: 29px; background-color: rgb(25, 197, 25); left: 14px; color: rgb(33, 238, 17); -unity-text-outline-color: rgba(26, 243, 11, 0.96); border-left-color: rgba(49, 251, 28, 0.93); border-right-color: rgba(49, 251, 28, 0.93); border-top-color: rgba(49, 251, 28, 0.93); border-bottom-color: rgba(49, 251, 28, 0.93);" />
             <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="HealthText" style="position: absolute; top: 21px; left: 16px; width: 80px; height: 18px;" />
+            <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="LevelText" style="position: absolute; top: 37px; left: 16px; width: 80px; height: 18px;" />
+            <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="XPText" style="position: absolute; top: 54px; left: 16px; width: 80px; height: 23px;" />
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>
