@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
     public List<Actor> Enemies = new List<Actor>();
     public Dictionary<Vector3, Consumable> Items = new Dictionary<Vector3, Consumable>();
     public List<Ladder> Ladders = new List<Ladder>();
+    public List<TombStone> TombStones = new List<TombStone>();
 
     public GameObject CreateGameObject(string name, Vector2 position)
     {
@@ -45,6 +46,11 @@ public class GameManager : MonoBehaviour
             Enemies.Remove(enemy);
             UIManager.Get.UpdateEnemies(Enemies.Count); // Update enemies count
         }
+    }
+
+    public void AddTombStone(TombStone stone)
+    {
+        TombStones.Add(stone);
     }
 
     public void StartEnemyTurn()
@@ -167,7 +173,7 @@ public class GameManager : MonoBehaviour
         return Player;
     }
 
-    public void ClearAllObjects()
+    public void ClearFloor()
     {
         // Clear all enemies
         foreach (var enemy in Enemies)
@@ -182,6 +188,20 @@ public class GameManager : MonoBehaviour
             Destroy(item.gameObject);
         }
         Items.Clear();
+
+        // Clear all ladders
+        foreach (var ladder in Ladders)
+        {
+            Destroy(ladder.gameObject);
+        }
+        Ladders.Clear();
+
+        // Clear all tombstones
+        foreach (var tombstone in TombStones)
+        {
+            Destroy(tombstone.gameObject);
+        }
+        TombStones.Clear();
 
         // Update UI
         UIManager.Get.UpdateEnemies(Enemies.Count);

@@ -13,6 +13,11 @@ public class AStar : MonoBehaviour {
   /// <returns>List of directions to move to get to the end</returns>
   public Vector2 Compute(Vector2Int start, Vector2Int goal) {
     currentNode = GetNode(start);
+    if (currentNode == null) {
+      Debug.LogError("Start node is null!");
+      return Vector2.zero;
+    }
+
     openList = new HashSet<Node>();
     closedList = new HashSet<Node>();
     openList.Add(currentNode);
@@ -24,6 +29,12 @@ public class AStar : MonoBehaviour {
       UpdateCurrentTile(ref currentNode);
       path = GeneratePath(currentNode, start, goal);
     }
+
+    if (path == null || path.Count == 0) {
+      Debug.LogError("Path not found!");
+      return Vector2.zero;
+    }
+
     Vector2 stepDirection = new Vector2(path.Peek().x - start.x, path.Peek().y - start.y);
 
     if (GameManager.Get.GetActorAtLocation(transform.position + (Vector3)stepDirection)) {
@@ -43,7 +54,9 @@ public class AStar : MonoBehaviour {
         if (y != 0 || x != 0) {
           if (neighbourPos != start && MapManager.Get.FloorMap.GetTile((Vector3Int)neighbourPos)) {
             Node neighbour = GetNode(neighbourPos);
-            neighbours.Add(neighbour);
+            if (neighbour != null) {
+              neighbours.Add(neighbour);
+            }
           }
         }
       }
@@ -105,7 +118,9 @@ public class AStar : MonoBehaviour {
     closedList.Add(current);
 
     if (openList.Count > 0) {
-      current = openList.OrderBy(x => x.f).First();
+      current = openList.OrderBy(x => x.f).FirstOrDefault();
+    } else {
+      current = null;
     }
   }
 
@@ -145,4 +160,3 @@ public class AStar : MonoBehaviour {
     return path.Pop();
   }
 }
-

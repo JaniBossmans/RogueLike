@@ -74,12 +74,13 @@ public class MapManager : MonoBehaviour
 
     private void ClearObjects()
     {
-        GameManager.Get.ClearAllObjects(); // Clear enemies and items
+        GameManager.Get.ClearFloor(); // Clear enemies and items
         FogMap.ClearAllTiles(); // Clear fog tiles
     }
 
     public void MoveUp()
     {
+        GameManager.Get.ClearFloor(); // Clear current floor
         floor--;
         if (floor < 0)
         {
@@ -90,6 +91,7 @@ public class MapManager : MonoBehaviour
 
     public void MoveDown()
     {
+        GameManager.Get.ClearFloor(); // Clear current floor
         floor++;
         GenerateDungeon();
     }

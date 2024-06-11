@@ -858,6 +858,7 @@ MonoBehaviour:
   Player: {fileID: 0}
   Enemies: []
   Ladders: []
+  TombStones: []
 --- !u!4 &1684302755
 Transform:
   m_ObjectHideFlags: 0

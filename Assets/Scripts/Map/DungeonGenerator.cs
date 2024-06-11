@@ -12,11 +12,11 @@ public class DungeonGenerator : MonoBehaviour
     private int currentFloor;
 
     List<Room> rooms = new List<Room>();
+    private List<string> enemyNames = new List<string> { "Dwarf", "Spider", "Pigman", "Eye", "Wolf", "Cock_Dragon", "Wasp", "Tiger", "Woman", "Ghost" };
 
     public void SetSize(int width, int height)
     {
         this.width = width;
-        this.height = height;
     }
 
     public void SetRoomSize(int min, int max)
@@ -172,21 +172,18 @@ public class DungeonGenerator : MonoBehaviour
 
     private void PlaceEnemies(Room room, int maxEnemies)
     {
-        int num = Random.Range(0, maxEnemies + 1);
+        int numEnemies = Random.Range(0, maxEnemies + 1);
+        float difficultyMultiplier = Mathf.Clamp01((float)currentFloor / 10f);
 
-        for (int counter = 0; counter < num; counter++)
+        for (int i = 0; i < numEnemies; i++)
         {
             int x = Random.Range(room.X + 1, room.X + room.Width - 1);
             int y = Random.Range(room.Y + 1, room.Y + room.Height - 1);
 
-            if (Random.value < 0.5f)
-            {
-                GameManager.Get.CreateGameObject("Wolf", new Vector2(x, y));
-            }
-            else
-            {
-                GameManager.Get.CreateGameObject("Wasp", new Vector2(x, y));
-            }
+            int enemyIndex = Mathf.FloorToInt(Random.Range(0, enemyNames.Count) * difficultyMultiplier);
+            string enemyName = enemyNames[enemyIndex];
+
+            GameManager.Get.CreateGameObject(enemyName, new Vector2(x, y));
         }
     }
 
